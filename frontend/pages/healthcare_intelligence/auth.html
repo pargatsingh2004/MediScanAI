@@ -1,0 +1,28 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf_token }}"><title>{% if mode == 'signup' %}Create account{% else %}Sign in{% endif %} — MediScan AI</title><link rel="stylesheet" href="{% static 'css/landing.css' %}"><link rel="stylesheet" href="{% static 'css/portal.css' %}"></head>
+<body class="light">
+  <header class="portal-nav"><a class="portal-brand" href="{% url 'landing' %}">MediScan <b>AI</b></a><div class="portal-actions"><button type="button" class="portal-action" data-theme-toggle aria-label="Switch theme">◐</button><a class="portal-action" href="{% url 'landing' %}">Back to home</a></div></header>
+  <main class="auth-page"><div class="auth-wrap">
+    <aside class="auth-aside"><a class="portal-brand" href="{% url 'landing' %}">MediScan <b>AI</b></a><div><div class="info-eyebrow">Your personal health workspace</div><h1>Clarity for every report.</h1><p>Keep your medical reports, plain-language summaries, follow-up questions, reminders, trends, and care options together.</p></div><div><span class="trust-badge">Private account workspace</span><span class="trust-badge">English · हिन्दी · Hinglish</span></div></aside>
+    <section class="auth-form-panel"><div class="info-eyebrow">{% if mode == 'signup' %}Create your account{% else %}Welcome back{% endif %}</div><h2>{% if mode == 'signup' %}Get started{% else %}Sign in{% endif %}</h2><p>{% if mode == 'signup' %}Use your email to set up a private report workspace.{% else %}Sign in to view your saved reports and follow-ups.{% endif %}</p>
+      {% if confirmed %}<div class="portal-status success">Email confirmed. You can sign in now.</div>{% endif %}{% if reset %}<div class="portal-status success">Password updated. Sign in with your new password.</div>{% endif %}
+      <div id="auth-message" class="portal-status" role="status" hidden></div>
+      <form id="auth-form" class="auth-form" data-mode="{{ mode }}" data-next="{{ next_url }}" novalidate>
+        {% if mode == 'signup' %}<div class="portal-field"><label for="auth-name">Full name</label><input id="auth-name" name="fullName" autocomplete="name" maxlength="150" required></div>{% endif %}
+        <div class="portal-field"><label for="auth-email">Email address</label><input id="auth-email" name="email" type="email" autocomplete="email" required></div>
+        <div class="portal-field"><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" autocomplete="{% if mode == 'signup' %}new-password{% else %}current-password{% endif %}" minlength="8" required></div>
+        {% if mode == 'signup' %}<div class="portal-field"><label for="auth-confirm-password">Confirm password</label><input id="auth-confirm-password" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></div><label class="portal-terms"><input id="auth-terms" type="checkbox" required> I agree to the <a href="{% url 'terms' %}">Terms</a> and have read the <a href="{% url 'privacy' %}">Privacy</a> information.</label>{% endif %}
+        {% if mode == 'signup' %}<div class="portal-field" id="auth-otp-row" hidden><label for="auth-otp">Six-digit verification code</label><input id="auth-otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>{% endif %}
+        <button id="auth-submit" class="portal-button" type="submit">{% if mode == 'signup' %}Create account{% else %}Sign In{% endif %}</button>
+      </form>
+      <div class="auth-links">{% if mode == 'signup' %}<a href="{% url 'login' %}">Already have an account? Sign in</a>{% else %}<a href="{% url 'signup' %}">Create account</a><button class="auth-link-button" type="button" id="forgot-password">Forgot password?</button>{% endif %}</div>
+      {% if mode == 'login' %}<div class="auth-admin-action"><a class="portal-button secondary" href="{% url 'admin:index' %}">Admin panel</a></div>{% endif %}
+      {% if mode == 'login' %}<div class="auth-resend" id="resend-verification" hidden><span>Need another verification email?</span><button class="auth-link-button" type="button" id="resend-button">Resend verification</button></div>{% endif %}
+      <p class="auth-disclaimer">MediScan AI supports report understanding. It does not replace professional medical advice.</p>
+    </section>
+  </div></main>
+  <script src="{% static 'js/auth.js' %}" defer></script>
+</body>
+</html>

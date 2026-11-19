@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+media/
+staticfiles/
+node_modules/
+.next/
+MediScanAI_HealthcareIntelligence_Integrated.zip
+MediScanAI_ExactStructure.zip

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ title }} - MediScanAI{% endblock %}</title>
+  
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/static/css/healthcare.css">
+  {% block extra_css %}{% endblock %}
+
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+  <!-- Google Maps JavaScript API (Loads if API key is provided) -->
+  {% if google_maps_api_key %}
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+  {% endif %}
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="{% url 'healthcare_intelligence:dashboard' %}" class="brand-link">
+        <div class="brand-icon">M</div>
+        <span>MediScan<span style="color:var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="{% url 'healthcare_intelligence:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+          <li><a href="{% url 'healthcare_intelligence:nearby_hospitals' %}" class="nav-link {% if request.resolver_match.url_name == 'nearby_hospitals' %}active{% endif %}">Find Hospitals</a></li>
+          <li><a href="{% url 'healthcare_intelligence:find_doctors' %}" class="nav-link {% if request.resolver_match.url_name == 'find_doctors' %}active{% endif %}">Find Doctors</a></li>
+          <li><a href="{% url 'healthcare_intelligence:report_analysis' %}" class="nav-link {% if request.resolver_match.url_name == 'report_analysis' %}active{% endif %}">Report Analysis</a></li>
+          <li><a href="{% url 'healthcare_intelligence:map_navigation' %}" class="nav-link {% if request.resolver_match.url_name == 'map_navigation' %}active{% endif %}">Map Navigation</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Location Pill -->
+        <div id="nav-location-pill" class="location-pill" title="Click to detect or change location">
+          <span>📍</span>
+          <span id="location-pill-text">
+            {% if user_location %}
+              {{ user_location.address|default:"Location Set"|truncatechars:20 }}
+            {% else %}
+              Set Location
+            {% endif %}
+          </span>
+        </div>
+
+        <div style="font-size:0.85rem;color:var(--text-secondary);">
+          👤 <span style="color:#fff;font-weight:600;">{{ user.username|default:"Patient" }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Location Change Modal -->
+  <div id="location-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="color:#fff;">📍 Your Healthcare Location</h3>
+        <button type="button" class="modal-close">&times;</button>
+      </div>
+
+      <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+        Your location is used with your permission to identify nearby hospitals and calculate accurate driving distances.
+      </p>
+
+      <div style="margin-bottom:1.25rem;">
+        <button type="button" class="btn btn-primary" style="width:100%;" onclick="UserLocationManager.detectCurrentLocation(() => HealthcareApp.closeModal('location-modal'))">
+          🎯 Auto-Detect My Current GPS Location
+        </button>
+      </div>
+
+      <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;margin-bottom:1.25rem;">
+        — OR ENTER MANUALLY —
+      </div>
+
+      <form id="manual-location-form" onsubmit="event.preventDefault(); UserLocationManager.setManualLocation(this.lat.value, this.lng.value, this.address.value);">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem;color:var(--text-muted);">Latitude</label>
+            <input type="number" step="any" name="lat" required placeholder="e.g. 28.5367" class="filter-input" style="margin-top:0.25rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.8rem;color:var(--text-muted);">Longitude</label>
+            <input type="number" step="any" name="lng" required placeholder="e.g. 77.2882" class="filter-input" style="margin-top:0.25rem;" />
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.8rem;color:var(--text-muted);">City / Address Description</label>
+          <input type="text" name="address" placeholder="e.g. South Delhi, New Delhi" class="filter-input" style="margin-top:0.25rem;" />
+        </div>
+
+        <button type="submit" class="btn btn-outline" style="width:100%;">Save Manual Location</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Appointment Booking Modal -->
+  <div id="appointment-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 id="booking-modal-title" style="color:#fff;">Book Doctor Consultation</h3>
+          <p id="booking-modal-subtitle" style="font-size:0.82rem;color:var(--accent-cyan);margin-top:0.2rem;"></p>
+        </div>
+        <button type="button" class="modal-close">&times;</button>
+      </div>
+
+      <form id="appointment-booking-form">
+        <input type="hidden" name="doctor_id" id="booking-doctor-id">
+        <input type="hidden" name="hospital_id" id="booking-hospital-id">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+          <div>
+            <label class="filter-label">Preferred Date</label>
+            <input type="date" name="appointment_date" id="booking-date" required class="filter-input" style="margin-top:0.25rem;" />
+          </div>
+          <div>
+            <label class="filter-label">Preferred Time</label>
+            <select name="appointment_time" required class="filter-select" style="margin-top:0.25rem;">
+              <option value="10:00">10:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="filter-label">Contact Phone</label>
+          <input type="tel" name="contact_phone" required placeholder="e.g. +91 98765 43210" class="filter-input" style="margin-top:0.25rem;" />
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label class="filter-label">Reason for Consultation / Symptoms</label>
+          <textarea name="reason_for_visit" rows="3" placeholder="Describe symptoms or report findings to review..." class="filter-input" style="margin-top:0.25rem;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;">Confirm Appointment Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div style="max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <strong>MediScanAI Healthcare Intelligence System</strong> — AI-Assisted Patient Awareness & Doctor Discovery.
+      </div>
+      <div>
+        Medical Disclaimer: Automated analysis is for information support only. Please consult certified physicians for definitive care.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core Scripts -->
+  <script src="/static/js/healthcare.js"></script>
+  <script src="/static/js/location.js"></script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

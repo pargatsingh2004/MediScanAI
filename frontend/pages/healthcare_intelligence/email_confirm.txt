@@ -1,0 +1,11 @@
+Hello {{ user.get_full_name|default:user.username }},
+
+Confirm your MediScan AI account with this six-digit code:
+{{ otp }}
+
+This code expires after 10 minutes.
+
+You can also confirm by opening this link:
+{{ confirm_url }}
+
+If you did not request an account, you can ignore this email.

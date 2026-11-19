@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/mediscan-dashboard.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}">MediScan AI administration</a>
+    <a class="ops-link" href="{% url 'project_admin:dashboard' %}">Operations</a>
+  </div>
+{% endblock %}

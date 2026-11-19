@@ -1,0 +1,45 @@
+{% extends "healthcare_intelligence/base.html" %}
+
+{% block title %}Find Verified Doctors - MediScanAI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/doctors.css">
+{% endblock %}
+
+{% block content %}
+<div class="page-head" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;">
+  <div>
+    <h1 class="page-title">Find & Compare Verified Doctors</h1>
+    <p class="page-subtitle">Multi-factor ranked medical practitioners matched by specialty, proximity, experience, and verified ratings.</p>
+  </div>
+
+  <div style="min-width:240px;">
+    <select id="doctor-specialty-filter" class="filter-select">
+      <option value="">All Medical Specialties</option>
+      {% for spec in specialties %}
+      <option value="{{ spec.code }}" {% if selected_specialty == spec.code %}selected{% endif %}>{{ spec.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<!-- Ranking Formula Info Banner -->
+<div class="card" style="margin-bottom:1.75rem;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.25);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+  <div style="font-size:0.85rem;color:var(--text-secondary);">
+    <strong style="color:#fff;">Smart Ranking Engine Weights:</strong>
+    Specialty Match (40%) • Distance / Proximity (20%) • Qualifications & Experience (20%) • Verified Ratings (15%) • Availability (5%)
+  </div>
+  <button type="button" class="btn btn-outline" style="font-size:0.78rem;padding:0.3rem 0.7rem;" onclick="UserLocationManager.detectCurrentLocation(() => DoctorsManager.loadDoctors())">
+    📍 Recalculate Distance from My Location
+  </button>
+</div>
+
+<!-- Doctors Grid (Dynamically Populated) -->
+<section id="doctors-grid" class="doctors-grid">
+  <!-- Populated via doctors.js -->
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/doctors.js"></script>
+{% endblock %}

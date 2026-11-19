@@ -1,0 +1,2 @@
+"""Nearby hospital discovery module."""
+

@@ -1,0 +1,2 @@
+"""Report-grounded assistant module."""
+

@@ -1,0 +1,108 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf_token }}"><title>Your Workspace — MediScan AI</title><link rel="stylesheet" href="{% static 'css/landing.css' %}"><link rel="stylesheet" href="{% static 'css/portal.css' %}"></head>
+<body class="light" data-user-id="{{ user.id }}">
+  <header class="portal-nav"><a class="portal-brand" href="{% url 'landing' %}">MediScan <b>AI</b></a><div class="portal-actions"><span class="portal-user">{{ user.get_full_name|default:user.username }}</span><button type="button" class="portal-action" data-theme-toggle aria-label="Switch theme">◐</button><button type="button" class="portal-action" id="sign-out">Sign out</button></div></header>
+  <div class="portal-layout">
+    <aside class="portal-sidebar" aria-label="Workspace navigation"><div class="portal-nav-label">Workspace</div>
+      <button class="portal-tab active" data-tab="dashboard"><span class="portal-tab-icon">▦</span>Dashboard</button>
+      <button class="portal-tab" data-tab="upload"><span class="portal-tab-icon">↑</span>Upload report</button>
+      <button class="portal-tab" data-tab="trends"><span class="portal-tab-icon">⌁</span>Health trends</button>
+      <button class="portal-tab" data-tab="compare"><span class="portal-tab-icon">⇄</span>Compare reports</button>
+      <button class="portal-tab" data-tab="reminders"><span class="portal-tab-icon">◷</span>Medicine reminders</button>
+      <button class="portal-tab" data-tab="chat"><span class="portal-tab-icon">✦</span>Health assistant</button>
+      <button class="portal-tab" data-tab="healthcare"><span class="portal-tab-icon">⌖</span>Care options</button>
+      <button class="portal-tab" data-tab="account"><span class="portal-tab-icon">⚙</span>Account settings</button>
+      <div class="portal-sidebar-footer">MediScan AI supports report understanding and preparation for clinician visits. It does not diagnose or treat.</div>
+    </aside>
+
+    <main class="portal-content">
+      <div id="workspace-notice" class="portal-status" role="status" hidden></div>
+
+      <section class="portal-section active" data-workspace-section="dashboard">
+        <h1 class="portal-heading">Your health workspace</h1><p class="portal-lede">Review reports, follow-up questions, trends, and care options in one place.</p>
+        <div class="portal-stats"><div class="portal-stat"><strong id="stat-reports">0</strong><span>Saved reports</span></div><div class="portal-stat"><strong id="stat-findings">0</strong><span>Flagged values</span></div><div class="portal-stat"><strong id="stat-reminders">0</strong><span>Active reminders</span></div><div class="portal-stat"><strong id="stat-risk">—</strong><span>Latest report risk</span></div></div>
+        <div class="portal-grid"><section class="portal-card span-4"><h2>Report history</h2><p>Select a report to open its saved findings and conversation.</p><div class="report-list" id="workspace-report-list"><div class="portal-empty">Loading your reports…</div></div><button class="portal-button secondary" type="button" data-open-tab="upload" style="margin-top:.8rem">Upload a report</button></section>
+          <section class="portal-card span-8"><div id="report-details"><div class="portal-empty">Choose a report from history to review its results.</div></div></section>
+          <section class="portal-card span-6"><h2>Fast access</h2><div class="portal-link-grid"><a class="portal-link-card" href="{% url 'healthcare_intelligence:nearby_hospitals' %}"><strong>Nearby hospitals</strong><span>Search hospitals and open directions.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:find_doctors' %}"><strong>Find doctors</strong><span>Browse specialties and book an appointment.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:map_navigation' %}"><strong>Map navigation</strong><span>Plan a route to a care location.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:report_analysis' %}"><strong>Report analysis</strong><span>Open the full healthcare analysis page.</span></a></div></section>
+          <section class="portal-card span-6"><h2>Use your report safely</h2><p>Check the extracted text against the original file. Reference ranges and clinical meaning can depend on your health history and lab. Talk with a qualified clinician before changing medicines or treatment.</p><p id="dashboard-empty-hint" class="portal-empty">Your first report will appear here after you upload it.</p></section>
+        </div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="upload">
+        <h1 class="portal-heading">Upload a medical report</h1><p class="portal-lede">Add a PDF or image to your private history. The report is stored with your account and analyzed for text and recognized lab values.</p>
+        <div class="portal-grid"><section class="portal-card span-8"><form id="workspace-upload-form" enctype="multipart/form-data"><div class="portal-field"><label for="workspace-file">Choose a PDF, PNG, or JPG</label><input id="workspace-file" name="file" type="file" accept=".pdf,.png,.jpg,.jpeg" required></div><div class="portal-field"><label for="report-language">Explanation language</label><select id="report-language" name="language"><option value="en">English</option><option value="hi">Hindi</option><option value="hinglish">Hinglish</option></select></div><div class="portal-field"><div id="upload-drop-zone" class="portal-drop-zone">Drag a report here or choose a file above. Maximum size: {{ max_report_size_mb|default:20 }} MB.</div></div><button class="portal-button" id="upload-submit" type="submit">Analyze and save report</button><div id="upload-status" class="portal-status" role="status" hidden></div></form></section>
+          <aside class="portal-card span-4"><h2>What happens next</h2><ol class="portal-step-list"><li>Text is extracted from your document.</li><li>Recognized numeric values are compared with local reference ranges.</li><li>You can review findings, save questions, compare reports, and chat about report wording.</li></ol><p>Do not use automated results as a diagnosis or substitute for professional medical advice.</p></aside></div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="trends">
+        <h1 class="portal-heading">Health trends</h1><p class="portal-lede">Track recognized numeric values across reports. Results are shown as recorded and may use different units or lab ranges.</p>
+        <div class="portal-grid"><section class="portal-card span-12"><div class="portal-card-heading-row"><div><h2>Report value history</h2><p id="trend-count">Loading report measurements…</p></div><div class="portal-actions-row"><label class="portal-trend-select" for="trend-metric">Test value <select id="trend-metric"><option value="">No values available</option></select></label><button class="portal-button secondary small" type="button" id="refresh-trends">Refresh</button><a class="portal-button secondary small" href="/api/analytics/trends/export">Download CSV</a></div></div><canvas class="portal-canvas" id="trend-chart" aria-label="Selected health test value over time"></canvas><div id="trend-chart-empty" class="portal-empty" hidden>Upload at least one report with recognized numeric values to see a chart.</div><div id="trend-list" class="portal-grid portal-trend-grid"></div></section></div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="compare">
+        <h1 class="portal-heading">Compare reports</h1><p class="portal-lede">Select two to six saved reports to compare recognized numeric measurements over time.</p>
+        <div class="portal-grid"><section class="portal-card span-4"><h2>Select reports</h2><form id="compare-form"><div id="compare-report-options" class="portal-check-list"><div class="portal-empty">Loading reports…</div></div><button class="portal-button" type="submit" style="margin-top:1rem">Compare selected</button></form></section><section class="portal-card span-8"><h2>Comparison</h2><div id="compare-result" class="portal-empty">Select reports to view changes.</div></section></div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="reminders">
+        <h1 class="portal-heading">Medicine reminders</h1><p class="portal-lede">Create browser reminders for the medicine schedule you enter. Alerts work while this workspace is open in your browser.</p>
+        <div class="portal-grid"><section class="portal-card span-5"><h2>Add a reminder</h2><div id="reminder-suggestions" class="portal-reminder-suggestions"></div><form id="reminder-form"><input type="hidden" id="reminder-edit-id" value=""><div class="portal-field"><label for="reminder-type">Reminder type</label><select id="reminder-type"><option value="medicine">Medicine</option><option value="appointment">Appointment</option><option value="test">Medical test</option><option value="follow_up">Follow-up</option></select></div><div class="portal-field"><label for="reminder-name">Reminder title</label><input id="reminder-name" name="medicineName" required maxlength="255"></div><div class="portal-form-row"><div class="portal-field"><label for="reminder-dosage">Dosage</label><input id="reminder-dosage" name="dosage" placeholder="As written on the prescription"></div><div class="portal-field"><label for="reminder-schedule">Schedule</label><input id="reminder-schedule" name="schedule" placeholder="e.g. Twice daily" required></div></div><div class="portal-field"><label for="reminder-times">Reminder times (24-hour, comma separated)</label><input id="reminder-times" name="reminderTimes" placeholder="08:00, 20:00" required></div><div class="portal-field"><label for="reminder-instructions">Instructions</label><textarea id="reminder-instructions" name="instructions" placeholder="Optional notes from your clinician"></textarea></div><div class="portal-field"><label for="reminder-tone">Alarm sound</label><select id="reminder-tone" name="alarmTone"><option value="default">Default</option><option value="soft">Soft</option><option value="beep">Beep</option><option value="alert">Alert</option>        </select></div><label class="portal-terms">        <input id="reminder-email" type="checkbox"> Email this reminder if notifications are enabled</label><div class="portal-actions-row"><button class="portal-button" id="reminder-submit" type="submit">Save reminder</button><button class="portal-button secondary" id="cancel-reminder-edit" type="button" hidden>Cancel edit</button></div><div id="reminder-status" class="portal-status" hidden></div></form></section><section class="portal-card span-7"><div class="portal-card-heading-row"><div><h2>Your reminders</h2><p>Enable browser notifications for timed alerts.</p></div><button class="portal-button secondary small" id="enable-notifications" type="button">Enable notifications</button></div><div id="reminder-list" class="portal-reminder-list"><div class="portal-empty">Loading reminders…</div></div></section></div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="account">
+        <h1 class="portal-heading">Account settings</h1>
+        <p class="portal-lede">Manage your profile, notification consent, saved hospitals, and saved doctors.</p>
+        <div class="portal-grid">
+          <section class="portal-card span-6">
+            <h2>Profile</h2>
+            <form id="account-profile-form">
+              <div class="portal-field"><label for="profile-name">Full name</label><input id="profile-name" name="fullName" maxlength="150"></div>
+              <div class="portal-form-row">
+                <div class="portal-field"><label for="profile-blood">Blood group</label><select id="profile-blood" name="bloodGroup"><option value="unknown">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+                <div class="portal-field"><label for="profile-gender">Gender</label><select id="profile-gender" name="gender"><option value="prefer_not_to_say">Prefer not to say</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+              </div>
+              <div class="portal-field"><label for="profile-emergency-name">Emergency contact name</label><input id="profile-emergency-name" name="emergencyContactName" maxlength="120"></div>
+              <div class="portal-field"><label for="profile-emergency-phone">Emergency contact phone</label><input id="profile-emergency-phone" name="emergencyContactPhone" maxlength="25"></div>
+              <div class="portal-field"><label for="profile-location">Location address</label><input id="profile-location" name="locationAddress" maxlength="255"></div>
+              <button class="portal-button" type="submit">Save profile</button>
+              <div id="profile-status" class="portal-status" hidden></div>
+            </form>
+          </section>
+          <section class="portal-card span-6">
+            <h2>Email notifications</h2>
+            <form id="notification-preferences-form">
+              <label class="portal-terms"><input type="checkbox" name="email_enabled"> Enable email notifications</label>
+              <label class="portal-terms"><input type="checkbox" name="report_analysis"> Report analysis completion</label>
+              <label class="portal-terms"><input type="checkbox" name="ocr_completed"> OCR processing completion</label>
+              <label class="portal-terms"><input type="checkbox" name="health_trends"> Health trend reports</label>
+              <label class="portal-terms"><input type="checkbox" name="report_comparison"> Report comparison results</label>
+              <label class="portal-terms"><input type="checkbox" name="chatbot_summary"> Conversation summary</label>
+              <label class="portal-terms"><input type="checkbox" name="reminders"> Scheduled reminders</label>
+              <label class="portal-terms"><input type="checkbox" name="hospital_information"> Hospital information</label>
+              <label class="portal-terms"><input type="checkbox" name="doctor_information"> Doctor information</label>
+              <label class="portal-terms"><input type="checkbox" name="maps_information"> Maps and destination information</label>
+              <button class="portal-button" type="submit">Save notification settings</button>
+              <div id="notification-status" class="portal-status" hidden></div>
+            </form>
+          </section>
+          <section class="portal-card span-6"><h2>Saved hospitals</h2><div id="saved-hospitals" class="portal-data-list"><div class="portal-empty">Loading saved hospitals…</div></div></section>
+          <section class="portal-card span-6"><h2>Saved doctors</h2><div id="saved-doctors" class="portal-data-list"><div class="portal-empty">Loading saved doctors…</div></div></section>
+        </div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="chat">
+        <h1 class="portal-heading">Health assistant</h1><p class="portal-lede">Ask about the wording or values in a saved report. Responses use report context and are not a diagnosis.</p>
+        <div class="portal-grid"><section class="portal-card span-12"><div class="portal-form-row"><div class="portal-field"><label for="chat-report">Report</label><select id="chat-report"><option value="">Select a report</option></select></div><div class="portal-chat-prompts"><button type="button" class="portal-prompt" data-prompt="Can you explain the most important values in this report?">Explain key values</button><button type="button" class="portal-prompt" data-prompt="What questions should I ask my doctor about this report?">Help me prepare</button><button type="button" class="portal-prompt" data-prompt="Explain this report in simpler language.">Simplify this report</button></div></div><div id="chat-log" class="portal-chat-log"><div class="portal-chat-empty">Choose a report to see its saved conversation.</div></div><form id="chat-form" class="portal-chat-form"><button type="button" class="portal-button secondary" id="voice-input" aria-label="Use voice input">🎙</button><input id="chat-input" class="portal-input" autocomplete="off" placeholder="Ask a question about this report" required><button class="portal-button" type="submit">Send</button></form><div id="chat-status" class="portal-status" hidden></div></section></div>
+      </section>
+
+      <section class="portal-section" data-workspace-section="healthcare">
+        <h1 class="portal-heading">Care options near you</h1><p class="portal-lede">Search using your location, compare doctors and hospitals, and open route or appointment tools.</p>
+        <div class="portal-grid"><section class="portal-card span-12"><form id="places-form" class="portal-form-row"><div class="portal-field"><label for="places-lat">Latitude</label><input id="places-lat" value="28.5367" inputmode="decimal" required></div><div class="portal-field"><label for="places-lng">Longitude</label><input id="places-lng" value="77.2882" inputmode="decimal" required></div><div class="portal-field"><label for="places-radius">Search radius (meters)</label><input id="places-radius" value="10000" type="number" min="100" max="50000"></div><div class="portal-field"><label for="places-specialty">Doctor specialty</label><select id="places-specialty"><option value="">All matching doctors</option>{% for specialty in specialties %}<option value="{{ specialty.code }}">{{ specialty.name }}</option>{% endfor %}</select></div><div class="portal-field portal-place-actions"><button class="portal-button" type="submit">Search nearby</button><button class="portal-button secondary" id="use-location" type="button">Use my location</button></div></form><div id="places-status" class="portal-status" hidden></div></section><section class="portal-card span-6"><h2>Nearby hospitals</h2><div id="places-hospitals" class="portal-data-list"><div class="portal-empty">Search to find hospitals.</div></div></section><section class="portal-card span-6"><h2>Nearby doctors</h2><div id="places-doctors" class="portal-data-list"><div class="portal-empty">Search to find doctors.</div></div></section><section class="portal-card span-12"><h2>Full healthcare tools</h2><div class="portal-link-grid"><a class="portal-link-card" href="{% url 'healthcare_intelligence:nearby_hospitals' %}"><strong>Hospital discovery</strong><span>Filters, details, specialties, and directions.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:find_doctors' %}"><strong>Doctor recommendations</strong><span>Profiles, qualifications, and appointment booking.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:map_navigation' %}"><strong>Map navigation</strong><span>Route summary and Google Maps navigation.</span></a><a class="portal-link-card" href="{% url 'healthcare_intelligence:report_analysis' %}"><strong>Healthcare report tools</strong><span>Additional lab, specialty, and recommendation views.</span></a></div></section></div>
+      </section>
+    </main>
+  </div>
+  <script src="{% static 'js/workspace.js' %}" defer></script>
+</body>
+</html>

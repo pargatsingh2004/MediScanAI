@@ -1,0 +1,1 @@
+"""Bundled database seed data."""

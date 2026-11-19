@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Cardiology",
+    "code": "cardiology",
+    "description": "Heart disease, hypertension, cholesterol, and cardiovascular care.",
+    "icon_name": "heart",
+    "keywords": ["heart", "cardiac", "chest pain", "blood pressure", "hypertension", "cholesterol", "ldl", "hdl", "triglycerides", "ecg"]
+  },
+  {
+    "name": "Dermatology",
+    "code": "dermatology",
+    "description": "Skin conditions, rashes, acne, allergies, and dermatological surgery.",
+    "icon_name": "sun",
+    "keywords": ["skin", "rash", "itching", "eczema", "psoriasis", "dermatitis", "acne", "hair loss", "fungal"]
+  },
+  {
+    "name": "Orthopedics",
+    "code": "orthopedics",
+    "description": "Bones, joints, arthritis, spine, fractures, and sports injuries.",
+    "icon_name": "activity",
+    "keywords": ["bone", "joint", "knee", "spine", "fracture", "arthritis", "uric acid", "gout", "vitamin d"]
+  },
+  {
+    "name": "Neurology",
+    "code": "neurology",
+    "description": "Brain, headache, neuropathy, stroke, spine, and nerve disorders.",
+    "icon_name": "zap",
+    "keywords": ["brain", "headache", "migraine", "nerve", "neuropathy", "numbness", "seizure", "vertigo", "vitamin b12"]
+  },
+  {
+    "name": "Gastroenterology",
+    "code": "gastroenterology",
+    "description": "Digestive health, liver function, stomach ulcers, and acid reflux.",
+    "icon_name": "shield",
+    "keywords": ["stomach", "liver", "acid reflux", "gerd", "gastritis", "ulcer", "sgpt", "sgot", "bilirubin", "jaundice"]
+  },
+  {
+    "name": "Nephrology",
+    "code": "nephrology",
+    "description": "Kidney health, creatinine, renal clearance, and hypertension.",
+    "icon_name": "filter",
+    "keywords": ["kidney", "renal", "creatinine", "urea", "bun", "proteinuria", "edema", "stones"]
+  },
+  {
+    "name": "Ophthalmology",
+    "code": "ophthalmology",
+    "description": "Comprehensive vision care, cataracts, glaucoma, and retinopathy.",
+    "icon_name": "eye",
+    "keywords": ["eye", "vision", "cataract", "glaucoma", "retinopathy", "blur", "floaters"]
+  },
+  {
+    "name": "Endocrinology",
+    "code": "endocrinology",
+    "description": "Diabetes management, blood glucose, thyroid, and hormone care.",
+    "icon_name": "droplet",
+    "keywords": ["diabetes", "glucose", "sugar", "hba1c", "fbs", "ppbs", "insulin", "thyroid", "tsh"]
+  },
+  {
+    "name": "Pulmonology",
+    "code": "pulmonology",
+    "description": "Lungs, asthma, chronic cough, respiratory health, and allergies.",
+    "icon_name": "wind",
+    "keywords": ["lung", "cough", "asthma", "wheezing", "chest tightness", "bronchitis", "pneumonia", "respiratory"]
+  },
+  {
+    "name": "General Medicine",
+    "code": "general_medicine",
+    "description": "Comprehensive preventive health, adult medicine, fever, and routine reviews.",
+    "icon_name": "user-check",
+    "keywords": ["general", "fever", "weakness", "routine", "hemoglobin", "anemia", "wbc", "infection"]
+  }
+]

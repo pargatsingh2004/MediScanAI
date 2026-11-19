@@ -1,0 +1,103 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-scroll-behavior="smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>MediScan AI — Understand every medical report</title>
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+  <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+</head>
+<body class="light" data-signed-in="{{ is_signed_in|yesno:'true,false' }}">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="topbar">
+    <span><i class="live-dot"></i> Neural Engine Active</span>
+    <span>Clinical Support: 1800-MED-SCAN</span>
+    <span>Available 24 × 7</span>
+    <span class="topbar-badge">HIPAA COMPLIANT</span>
+  </div>
+  <header class="nav">
+    <a class="nav-logo" href="{% url 'landing' %}" aria-label="MediScan AI home">MediScan <b>AI</b></a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#scan">Scan a Report</a><a href="#features">Features</a><a href="#labs">Lab Analysis</a><a href="{% url 'about' %}">About</a>
+    </nav>
+    <div class="nav-right">
+      <span class="status-pill"><i class="live-dot"></i> System Operational</span>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">◐</button>
+      {% if is_signed_in %}
+        <a class="btn btn-outline" href="{% url 'workspace' %}">Workspace</a>
+      {% else %}
+        <a class="btn btn-outline" href="{% url 'login' %}">Sign In</a>
+        <a class="btn btn-solid" href="{% url 'signup' %}">Get Started →</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="about">
+      <div>
+        <div class="hero-eyebrow">Clinical AI Platform</div>
+        <h1>Understand Every<br><span class="highlight">Medical Report</span><br>With Precision</h1>
+        <p class="hero-sub">MediScan AI reads prescriptions and lab reports with clinical accuracy, then turns the result into plain-language guidance. Upload your first report free, then continue in your private workspace with saved history, assistant chat, and secure follow-up tools.</p>
+        <div class="hero-ctas">
+          <a class="btn-hero-primary" href="#scan">Scan a Report</a>
+          {% if is_signed_in %}<a class="btn-hero-ghost" href="{% url 'workspace' %}">Open Workspace</a>{% else %}<a class="btn-hero-ghost" href="{% url 'login' %}">Sign In</a>{% endif %}
+        </div>
+        <div class="trust-badges"><span class="trust-badge">HIPAA Compliant</span><span class="trust-badge">98.4% OCR Accuracy</span><span class="trust-badge">3 Languages</span><span class="trust-badge">&lt;2s Analysis</span></div>
+      </div>
+      <div class="hero-card-col">
+        <article class="patient-card">
+          <div class="pc-header"><div class="pc-person"><div class="pc-avatar">RS</div><div><div class="pc-name">Rahul Sharma</div><div class="pc-meta">PID-2025-00847 · Male, 34y · O+ · Diabetic</div></div></div><div class="pc-live"><i class="live-dot"></i> AI Analysis</div></div>
+          <div class="pc-ecg"><div class="pc-ecg-label">ECG — Lead II · Live Simulation</div><svg class="ecg-wave" viewBox="0 0 400 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 23h36l8-16 7 35 8-38 8 33 8-14h44l8-16 7 35 8-38 8 33 8-14h44l8-16 7 35 8-38 8 33 8-14h44l8-16 7 35 8-38 8 33 8-14h44" fill="none" stroke="url(#wave)" stroke-width="2"/><defs><linearGradient id="wave"><stop stop-color="#c9973a"/><stop offset="1" stop-color="#2a7a5c"/></linearGradient></defs></svg></div>
+          <div class="pc-vitals"><div class="pc-vital"><div class="pc-vital-label">BP</div><div class="pc-vital-val">128/84</div><div class="pc-vital-unit">mmHg</div><div class="pc-vital-bar"><div class="pc-vital-fill" style="width:65%;background:#0369a1"></div></div></div><div class="pc-vital"><div class="pc-vital-label">Pulse</div><div class="pc-vital-val">78</div><div class="pc-vital-unit">bpm</div><div class="pc-vital-bar"><div class="pc-vital-fill" style="width:52%;background:#dc2626"></div></div></div><div class="pc-vital"><div class="pc-vital-label">SpO2</div><div class="pc-vital-val">98</div><div class="pc-vital-unit">%</div><div class="pc-vital-bar"><div class="pc-vital-fill" style="width:98%;background:#16a34a"></div></div></div></div>
+          <div class="pc-labs"><div class="pc-labs-title">Recent Lab Values</div><div class="pc-lab-row"><span class="pc-lab-name">Blood Glucose (Fasting)</span><div class="pc-lab-right"><span class="pc-lab-val" style="color:var(--red)">126 mg/dL</span><span class="badge badge-high">HIGH</span></div></div><div class="pc-lab-row"><span class="pc-lab-name">Hemoglobin</span><div class="pc-lab-right"><span class="pc-lab-val" style="color:var(--orange)">10.2 g/dL</span><span class="badge badge-low">LOW</span></div></div><div class="pc-lab-row"><span class="pc-lab-name">Creatinine</span><div class="pc-lab-right"><span class="pc-lab-val" style="color:var(--green)">0.9 mg/dL</span><span class="badge badge-norm">OK</span></div></div></div>
+          <div class="pc-footer"><span class="ai-chip">AI</span><span class="pc-footer-txt">2 flagged values · Review recommended</span></div>
+        </article>
+      </div>
+    </section>
+
+    <div class="stats-band"><div class="stat-item"><div class="stat-val">98.4<span class="stat-unit">%</span></div><div class="stat-label">OCR Accuracy</div></div><div class="stat-item"><div class="stat-val">500+</div><div class="stat-label">Interactions Checked</div></div><div class="stat-item"><div class="stat-val">&lt;2<span class="stat-unit">s</span></div><div class="stat-label">Analysis Time</div></div><div class="stat-item"><div class="stat-val">3</div><div class="stat-label">Languages</div></div><div class="stat-item"><div class="stat-val">10K+</div><div class="stat-label">Reports Analyzed</div></div></div>
+
+    <div class="specialties-bar"><div class="ticker-label">Specialties</div><div class="ticker-wrap"><div class="ticker-track">{% for specialty in landing_specialties %}<div class="ticker-item"><span class="ticker-dot"></span>{{ specialty }}</div>{% endfor %}{% for specialty in landing_specialties %}<div class="ticker-item"><span class="ticker-dot"></span>{{ specialty }}</div>{% endfor %}</div></div></div>
+
+    <section class="upload-section" id="scan">
+      <div>
+        <div class="section-eyebrow">Free Preview</div><h2 class="section-h">Your report,<br>made easier to understand.</h2>
+        <p class="section-sub">Try one private preview without an account. Your file is processed for this preview and is not added to report history.</p>
+        <div class="landing-uploader">
+          <div class="drop-zone" id="guest-dropzone" role="button" tabindex="0" aria-label="Choose a medical report">
+            <input id="guest-file" type="file" accept=".pdf,.png,.jpg,.jpeg" hidden>
+            <div class="drop-icon-wrap">PDF</div><div class="drop-title" id="guest-file-name">Drop one PDF, PNG, or JPG report here</div><div class="drop-sub" id="guest-file-note">No signup required for the first upload. Results use OCR text from your report.</div><div class="fmt-chips"><span class="fmt-chip">PDF</span><span class="fmt-chip">PNG</span><span class="fmt-chip">JPG</span></div>
+          </div>
+          <div class="lang-selector"><span class="lang-label">Language preview</span><div class="lang-btns"><button class="lang-btn active" data-language="en" type="button">English</button><button class="lang-btn" data-language="hi" type="button">Hindi</button><button class="lang-btn" data-language="hinglish" type="button">Hinglish</button></div></div>
+          <button class="btn-analyze" id="guest-analyze" type="button">Choose Report</button><p class="upload-inline-note" id="guest-error" role="alert" hidden></p>
+          <div class="preview-card" id="guest-result" hidden></div>
+        </div>
+      </div>
+      <aside class="hiw-card"><div class="hiw-header"><div class="hiw-title">Four Steps to Health Clarity</div><div class="hiw-sub">From raw scan to useful questions.</div></div><div class="hiw-steps"><div class="hiw-step"><div class="hiw-num">01</div><div class="hiw-emoji">PDF</div><div><div class="hiw-step-title">Upload</div><div class="hiw-step-desc">Prescription or lab report accepted as PDF, photo, or scan.</div></div></div><div class="hiw-step"><div class="hiw-num">02</div><div class="hiw-emoji">OCR</div><div><div class="hiw-step-title">OCR Reads</div><div class="hiw-step-desc">Tesseract OCR extracts text from a document scan.</div></div></div><div class="hiw-step"><div class="hiw-num">03</div><div class="hiw-emoji">NLP</div><div><div class="hiw-step-title">NLP Decodes</div><div class="hiw-step-desc">Medical terms and lab values are organized in plain language.</div></div></div><div class="hiw-step"><div class="hiw-num">04</div><div class="hiw-emoji">AI</div><div><div class="hiw-step-title">Plan Follow-Up</div><div class="hiw-step-desc">Review findings, questions, reminders, and clinician options.</div></div></div></div></aside>
+    </section>
+
+    <section class="features-section" id="features"><div class="features-inner"><div class="features-head"><div class="section-eyebrow">Clinical Intelligence</div><h2 class="section-h">Everything Your Doctor Sees —<br>Explained to You</h2><p class="section-sub">Eight tools to help you review and follow up on your health information.</p></div><div class="features-grid">
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=dashboard{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">PHARMACOLOGY</div><div class="feature-icon">Rx</div><div class="feature-title">Medicine Analysis</div><div class="feature-desc">Medicine names and instructions from your reports in one place.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=chat{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">DRUG SAFETY</div><div class="feature-icon">Safe</div><div class="feature-title">Interaction Check</div><div class="feature-desc">Review medicines together with a qualified pharmacist or clinician.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=dashboard{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">PATHOLOGY</div><div class="feature-icon">Lab</div><div class="feature-title">Lab Report Flags</div><div class="feature-desc">Recognized test values compared with reference ranges.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=dashboard{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">DIAGNOSTICS</div><div class="feature-icon">Risk</div><div class="feature-title">Health Patterns</div><div class="feature-desc">See patterns that may be worth discussing with your doctor.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=dashboard{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">NUTRITION</div><div class="feature-icon">Diet</div><div class="feature-title">Lifestyle Guidance</div><div class="feature-desc">Practical follow-up prompts based on your report findings.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=healthcare{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">REFERRAL</div><div class="feature-icon">Care</div><div class="feature-title">Specialist Match</div><div class="feature-desc">Browse nearby specialties, doctors, and hospitals.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=reminders{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">COMPLIANCE</div><div class="feature-icon">Rem</div><div class="feature-title">Medicine Reminders</div><div class="feature-desc">Create timed browser reminders for medicines you choose.</div></a>
+      <a class="feature-card" href="{% if is_signed_in %}{% url 'workspace' %}?tab=chat{% else %}{% url 'signup' %}{% endif %}"><div class="feature-tag">ACCESSIBILITY</div><div class="feature-icon">Voice</div><div class="feature-title">Voice Explanation</div><div class="feature-desc">Use speech input and read assistant answers aloud.</div></a>
+    </div></div></section>
+
+    <section class="testimonials-section"><div class="features-inner"><div class="features-head"><div class="section-eyebrow">Clinical Testimonials</div><h2 class="section-h">Built for clearer<br>health conversations</h2></div><div class="testimonials-grid"><article class="tcard"><div class="tcard-avatar">PS</div><p class="tcard-text">“The plain-language summaries make it easier to prepare questions before a clinical visit.”</p><div class="tcard-name">Patient and caregiver support</div><div class="tcard-role">MediScan AI project use case</div><div class="tcard-stars">★★★★★</div></article><article class="tcard"><div class="tcard-avatar">RK</div><p class="tcard-text">“Keeping report history together helps me track what I want to discuss with my doctor.”</p><div class="tcard-name">Report review</div><div class="tcard-role">MediScan AI project use case</div><div class="tcard-stars">★★★★★</div></article><article class="tcard"><div class="tcard-avatar">AP</div><p class="tcard-text">“The system makes medical terms easier to review without replacing a clinician's guidance.”</p><div class="tcard-name">Health awareness</div><div class="tcard-role">MediScan AI project use case</div><div class="tcard-stars">★★★★★</div></article></div></div></section>
+
+    <section class="lab-section" id="labs"><div class="lab-copy"><div class="section-eyebrow">Lab Report Analysis</div><h2 class="section-h">Abnormal values,<br><em>flagged clearly</em></h2><p class="section-sub">Recognized numeric test values are shown with the reference range used by the analysis. Ask a qualified healthcare professional to interpret them in context.</p><a class="btn btn-solid" href="#scan">Analyze a report</a></div><div class="lab-table"><div class="lt-head"><div><strong>Sample Lab Values</strong><div class="lt-subhead">Example values shown for illustration</div></div><span class="badge badge-high">2 REVIEW</span></div><div class="lt-cols"><span>Parameter</span><span>Value</span><span>Reference</span><span>Status</span></div><div class="lt-row"><span>HbA1c</span><span>8.2%</span><span>&lt; 5.7%</span><span><b class="badge badge-high">HIGH</b></span></div><div class="lt-row"><span>Hemoglobin</span><span>9.4 g/dL</span><span>12–16.5 g/dL</span><span><b class="badge badge-low">LOW</b></span></div><div class="lt-row"><span>Creatinine</span><span>0.9 mg/dL</span><span>0.6–1.2 mg/dL</span><span><b class="badge badge-norm">NORMAL</b></span></div><div class="lt-row"><span>TSH</span><span>6.8 mIU/L</span><span>0.4–4.0 mIU/L</span><span><b class="badge badge-high">HIGH</b></span></div><div class="lt-foot">Sample data is illustrative; ranges can vary between laboratories.</div></div></section>
+
+    <section class="compliance-section"><div class="compliance-inner"><div><div class="section-eyebrow">Privacy and Control</div><h2 class="section-h">Your health information stays in your hands.</h2><p>Workspace reports are private to your account. Use the privacy controls and contact the team if you need support.</p></div><a class="btn btn-outline" href="{% url 'privacy' %}">Read Privacy Information</a></div></section>
+    <section class="alert-wrap"><div class="alert-card"><div class="alert-icon">!</div><div><div class="alert-title">A support tool, not a diagnosis</div><div class="alert-desc">MediScan AI helps explain information in medical documents. It cannot replace a physician, emergency service, or professional medical advice. If symptoms are severe or worsening, seek urgent care.</div></div><div class="alert-badge">CLINICIAN<br>FOLLOW-UP</div></div></section>
+    <section class="cta-section"><div class="cta-inner"><div class="section-eyebrow">Get started</div><h2>Your Health,<br><em>Decoded</em></h2><p>Start with a free report preview, or create a private workspace to keep your reports and follow-ups together.</p><div class="cta-buttons"><a class="btn-cta-primary" href="{% url 'signup' %}">Create Free Account</a><a class="btn-cta-ghost" href="{% url 'login' %}">Sign In</a></div></div></section>
+  </main>
+  <footer><a class="f-logo" href="{% url 'landing' %}">MediScan AI</a><p>© {% now "Y" %} MediScan AI · For education and report understanding</p><nav class="f-links"><a href="{% url 'about' %}">About</a><a href="{% url 'contact' %}">Contact</a><a href="{% url 'privacy' %}">Privacy</a><a href="{% url 'terms' %}">Terms</a><a href="{% url 'hipaa' %}">HIPAA</a></nav></footer>
+  <script src="{% static 'js/landing.js' %}" defer></script>
+</body>
+</html>

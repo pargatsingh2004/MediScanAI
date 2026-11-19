@@ -1,0 +1,115 @@
+{% extends "healthcare_intelligence/base.html" %}
+
+{% block title %}Hospital Navigation & Directions - MediScanAI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/maps.css">
+{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:1.25rem;">
+  <h1 class="page-title">Hospital Route & Live Navigation</h1>
+  <p class="page-subtitle">Real-time driving distances, estimated travel durations, and direct Google Maps navigation.</p>
+</div>
+
+<div class="map-layout">
+  
+  <!-- Left: Route Information & Controls -->
+  <aside class="navigation-panel">
+    
+    <!-- Destination Info Card -->
+    <div class="card">
+      <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">Selected Destination</div>
+      {% if hospital or external_destination %}
+      <h3 style="color:#fff;font-size:1.2rem;margin-top:0.25rem;">{{ destination_name }}</h3>
+      {% if hospital %}
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.35rem;">📍 {{ hospital.address }}</p>
+      {% else %}
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.35rem;">
+        External map listing — not independently verified by MediScanAI.
+      </p>
+      {% endif %}
+      {% else %}
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.35rem;">
+        No verified hospital selected. Choose a facility from the verified directory to get directions.
+      </p>
+      {% endif %}
+
+      {% if hospital and hospital.phone %}
+      <div style="font-size:0.82rem;color:var(--accent-teal);margin-top:0.5rem;">
+        📞 Call Facility: <strong style="color:#fff;">{{ hospital.phone }}</strong>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Travel Mode Switcher -->
+    {% if hospital or external_destination %}
+    <div class="travel-mode-tabs">
+      <button type="button" class="travel-mode-btn active" data-mode="DRIVING">🚗 Driving</button>
+      <button type="button" class="travel-mode-btn" data-mode="TRANSIT">🚌 Transit</button>
+      <button type="button" class="travel-mode-btn" data-mode="WALKING">🚶 Walking</button>
+    </div>
+
+    <!-- Route Distance & Time Card -->
+    <div class="route-summary-card">
+      <div class="route-stats-grid">
+        <div class="route-stat-item">
+          <span class="route-stat-label">Estimated Time</span>
+          <span id="route-duration-text" class="route-stat-val" style="color:var(--accent-cyan);">-- min</span>
+        </div>
+        <div class="route-stat-item">
+          <span class="route-stat-label">Distance</span>
+          <span id="route-distance-text" class="route-stat-val">-- km</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Large Prominent Start Navigation Button -->
+    <div>
+      <a id="start-navigation-btn" href="{{ initial_nav_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-nav-start" style="width:100%;text-align:center;">
+        🚀 START NAVIGATION
+      </a>
+    </div>
+
+    <!-- Explanation Box -->
+    <div class="navigation-banner">
+      ℹ️ <strong>Turn-by-Turn Navigation:</strong> Clicking "START NAVIGATION" opens Google Maps directly on your smartphone or browser with the exact coordinates pre-set for live GPS turn-by-turn spoken guidance.
+    </div>
+    {% else %}
+    <a href="/hospitals/" class="btn btn-primary" style="width:100%;text-align:center;">Find a verified hospital</a>
+    {% endif %}
+
+    <!-- Origin Update Pill -->
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">Departure Origin</div>
+      <div style="font-size:0.85rem;color:#fff;margin-top:0.25rem;">
+        {% if user_location.address %}{{ user_location.address }}{% elif user_location %}Saved coordinates{% else %}Default map center — update to your location{% endif %}
+      </div>
+      <button type="button" class="btn btn-outline" style="width:100%;margin-top:0.75rem;font-size:0.78rem;" onclick="UserLocationManager.detectCurrentLocation(() => window.location.reload())">
+        🎯 Re-center My GPS Location
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Right: Interactive Map -->
+  <section class="map-container-wrap">
+    <div id="map"></div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/maps.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    MapsManager.init({
+      originLat: {{ origin_lat|stringformat:"f" }},
+      originLng: {{ origin_lng|stringformat:"f" }},
+      destLat: {% if destination_lat != None %}{{ destination_lat|stringformat:"f" }}{% else %}null{% endif %},
+      destLng: {% if destination_lng != None %}{{ destination_lng|stringformat:"f" }}{% else %}null{% endif %}
+    });
+  });
+</script>
+{% endblock %}
